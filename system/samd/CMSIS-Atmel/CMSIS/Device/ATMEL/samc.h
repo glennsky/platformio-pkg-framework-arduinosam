@@ -41,10 +41,8 @@
  *
  */
 
-#ifndef _SAMC21_
-#define _SAMC21_
-
-#undef USBCON
+#ifndef _SAMC_
+#define _SAMC_
 
 /**
  * \defgroup SAMC21_definitions SAMC21 Device Definitions
