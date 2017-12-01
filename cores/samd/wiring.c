@@ -1,4 +1,5 @@
 /*
+  Copyright (c) 2017 MattairTech LLC. All right reserved.
   Copyright (c) 2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -26,30 +27,6 @@ extern "C" {
 #ifndef ADC_INPUTCTRL_MUXNEG_GND
 #define ADC_INPUTCTRL_MUXNEG_GND (0x18ul << ADC_INPUTCTRL_MUXNEG_Pos)
 #endif
-
-
-// Wait for synchronization of registers between the clock domains
-static __inline__ void syncADC() __attribute__((always_inline, unused));
-static void syncADC() {
-
-#if SAMC21
-  while ( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
-  while ( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
-#else
-  while ( ADC->STATUS.bit.SYNCBUSY == 1 );
-#endif
-}
-
-// Wait for synchronization of registers between the clock domains
-static __inline__ void syncGCLK() __attribute__((always_inline, unused));
-static void syncGCLK() {
-#if SAMC21
-  while ( GCLK->SYNCBUSY.reg & GCLK_SYNCBUSY_MASK );
-#else
-  while ( GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY );
-#endif
-}
-
 
 /*
  * System Core Clock is at 1MHz (8MHz/8) at Reset.
@@ -129,26 +106,16 @@ void init( void )
 
   // Initialize Analog Controller
   // Setting clock
-#if SAMC21
+#if SAMC_SERIES
   SUPC->VREF.reg |= SUPC_VREF_VREFOE;           // Enable Supply Controller Reference output for use with ADC and DAC (AR_INTREF)
 
   while ( GCLK->SYNCBUSY.reg & GCLK_SYNCBUSY_MASK );
 
   ADC0->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV256;   // Divide Clock by 256.
-  ADC0->CTRLC.reg = ADC_CTRLC_RESSEL_10BIT | ADC_CTRLC_R2R;         // 10 bits resolution as default, R2R requires ADC_SAMPCTRL_OFFCOMP=1
+  ADC0->CTRLC.reg = ADC_CTRLC_RESSEL_12BIT | ADC_CTRLC_R2R;         // 12 bits resolution as default, R2R requires ADC_SAMPCTRL_OFFCOMP=1
   ADC1->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV256;   // Divide Clock by 256.
-  ADC1->CTRLC.reg = ADC_CTRLC_RESSEL_10BIT | ADC_CTRLC_R2R;         // 10 bits resolution as default, R2R requires ADC_SAMPCTRL_OFFCOMP=1
-#else
-  while(GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY);
+  ADC1->CTRLC.reg = ADC_CTRLC_RESSEL_12BIT | ADC_CTRLC_R2R;         // 12 bits resolution as default, R2R requires ADC_SAMPCTRL_OFFCOMP=1
 
-  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_ID( GCM_ADC ) | // Generic Clock ADC
-                      GCLK_CLKCTRL_GEN_GCLK0     | // Generic Clock Generator 0 is source
-                      GCLK_CLKCTRL_CLKEN ;
-
-#endif
-
-
-#if SAMC21
   ADC0->SAMPCTRL.reg = (ADC_SAMPCTRL_SAMPLEN(0x0) | ADC_SAMPCTRL_OFFCOMP);     // ADC_SAMPCTRL_SAMPLEN must be 0 when ADC_SAMPCTRL_OFFCOMP=1
   ADC1->SAMPCTRL.reg = (ADC_SAMPCTRL_SAMPLEN(0x0) | ADC_SAMPCTRL_OFFCOMP);     // ADC_SAMPCTRL_SAMPLEN must be 0 when ADC_SAMPCTRL_OFFCOMP=1
   // Wait for synchronization of registers between the clock domains
@@ -169,8 +136,13 @@ void init( void )
   // Wait for synchronization of registers between the clock domains
   while ( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
   while ( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
-
 #else
+  while(GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY);
+
+  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_ID( GCM_ADC ) | // Generic Clock ADC
+                      GCLK_CLKCTRL_GEN_GCLK0     | // Generic Clock Generator 0 is source
+                      GCLK_CLKCTRL_CLKEN ;
+
   while( ADC->STATUS.bit.SYNCBUSY == 1 );          // Wait for synchronization of registers between the clock domains
 
   ADC->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV512 |    // Divide Clock by 512.
@@ -192,7 +164,7 @@ void init( void )
 
   analogReference( AR_DEFAULT ) ; // Analog Reference is AREF pin (3.3v)
 
-#if SAMC21
+#if SAMC_SERIES
   while ( GCLK->SYNCBUSY.reg & GCLK_SYNCBUSY_MASK );
 
   GCLK->PCHCTRL[GCM_DAC].reg = ( GCLK_PCHCTRL_CHEN | GCLK_PCHCTRL_GEN_GCLK0 );

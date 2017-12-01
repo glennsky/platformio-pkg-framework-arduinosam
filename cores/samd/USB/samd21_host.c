@@ -18,7 +18,7 @@
 
 #include "sam.h"
 
-#if !SAMC21
+#if !SAMC21_SERIES
 
 #include <stdio.h>
 #include <stdint.h>
@@ -523,4 +523,4 @@ uint32_t UHD_Pipe_Is_Transfer_Complete(uint32_t ul_pipe, uint32_t ul_token_type)
 
 #endif //  HOST_DEFINED
 
-#endif // SAMC21
+#endif // SAMC21_SERIES

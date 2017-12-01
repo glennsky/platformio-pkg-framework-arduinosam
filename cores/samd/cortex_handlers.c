@@ -1,4 +1,5 @@
 /*
+  Copyright (c) 2017 MattairTech LLC. All right reserved.
   Copyright (c) 2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -116,7 +117,7 @@ __attribute__ ((section(".isr_vector"))) const DeviceVectors exception_table =
   (void*) SysTick_Handler,
 
   /* Configurable interrupts */
-#if SAMC21
+#if SAMC21_SERIES
   (void*) SYSTEM_Handler,         /*  0 SYSTEM handler (includes SYSTEM, MCLK, OSCCTRL, OSC32KCTRL, PAC, PM, SUPC, and TAL) */
   (void*) WDT_Handler,            /*  1 Watchdog Timer */
   (void*) RTC_Handler,            /*  2 Real-Time Counter */
@@ -149,7 +150,7 @@ __attribute__ ((section(".isr_vector"))) const DeviceVectors exception_table =
   (void*) SDADC_Handler,          /* 29 SDADC */
   (void*) PTC_Handler,            /* 25 / 30 Peripheral Touch Controller */
 
-#else   // SAMC21
+#else   // !SAMC21_SERIES
   (void*) PM_Handler,             /*  0 Power Manager */
   (void*) SYSCTRL_Handler,        /*  1 System Control */
   (void*) WDT_Handler,            /*  2 Watchdog Timer */
@@ -179,7 +180,7 @@ __attribute__ ((section(".isr_vector"))) const DeviceVectors exception_table =
   (void*) PTC_Handler,            /* 26 Peripheral Touch Controller */
   (void*) I2S_Handler,            /* 27 Inter-IC Sound Interface */
   (void*) (0UL),                  /* Reserved */
-#endif  // SAMC21
+#endif  // SAMC21_SERIES
     
 };
 

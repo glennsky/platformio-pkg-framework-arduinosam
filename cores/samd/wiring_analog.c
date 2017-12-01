@@ -1,4 +1,5 @@
 /*
+  Copyright (c) 2017 MattairTech LLC. All right reserved.
   Copyright (c) 2014 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -30,7 +31,7 @@ static int _writeResolution = 8;
 // Wait for synchronization of registers between the clock domains
 static __inline__ void syncADC() __attribute__((always_inline, unused));
 static void syncADC() {
-#if SAMC
+#if SAMC_SERIES
   while ( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
   while ( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
 #else
@@ -43,7 +44,7 @@ static void syncADC() {
 // Wait for synchronization of registers between the clock domains
 static __inline__ void syncDAC() __attribute__((always_inline, unused));
 static void syncDAC() {
-#if SAMC
+#if SAMC_SERIES
   while ( DAC->SYNCBUSY.reg & DAC_SYNCBUSY_MASK );
 #else
   while (DAC->STATUS.bit.SYNCBUSY == 1)
@@ -54,7 +55,7 @@ static void syncDAC() {
 // Wait for synchronization of registers between the clock domains
 static __inline__ void syncTC_16(Tc* TCx) __attribute__((always_inline, unused));
 static void syncTC_16(Tc* TCx) {
-#if SAMC
+#if SAMC_SERIES
   while (TCx->COUNT16.SYNCBUSY.reg & (TC_SYNCBUSY_SWRST | TC_SYNCBUSY_ENABLE | TC_SYNCBUSY_CTRLB | TC_SYNCBUSY_STATUS | TC_SYNCBUSY_COUNT));
 #else
   while (TCx->COUNT16.STATUS.bit.SYNCBUSY);
@@ -71,7 +72,7 @@ void analogReadResolution(int res)
 {
   _readResolution = res;
   if (res > 10) {
-#if SAMC
+#if SAMC_SERIES
     ADC0->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_12BIT_Val;
     ADC1->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_12BIT_Val;
 #else
@@ -79,7 +80,7 @@ void analogReadResolution(int res)
 #endif
     _ADCResolution = 12;
   } else if (res > 8) {
-#if SAMC
+#if SAMC_SERIES
     ADC0->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_10BIT_Val;
     ADC1->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_10BIT_Val;
 #else
@@ -87,7 +88,7 @@ void analogReadResolution(int res)
 #endif
     _ADCResolution = 10;
   } else {
-#if SAMC
+#if SAMC_SERIES
     ADC0->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_8BIT_Val;
     ADC1->CTRLC.bit.RESSEL = ADC_CTRLC_RESSEL_8BIT_Val;
 #else
@@ -123,7 +124,7 @@ static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to)
 void analogReference(eAnalogReference mode)
 {
   syncADC();
-#if SAMC
+#if SAMC_SERIES
   if (mode == 0) {              // Set to 1.0V for the SAML, 1.024V for the SAMC
     SUPC->VREF.reg &= ~SUPC_VREF_SEL_Msk;
   } else if (mode > 5) {                // Values above 5 are used for the Supply Controller reference (AR_INTREF)
@@ -175,7 +176,7 @@ uint32_t analogRead(uint32_t pin)
     pin += A0;
   }
 
-#if SAMC
+#if SAMC_SERIES
   Adc* ADC;
   if ( g_APinDescription[pin].ulPinType == PIO_ANALOG_ALT ) {
     ADC = ADC1;
@@ -288,7 +289,7 @@ void analogWrite(uint32_t pin, uint32_t value)
       tcEnabled[tcNum] = true;
 
       uint16_t GCLK_CLKCTRL_IDs[] = {
-#if SAMC21
+#if SAMC_SERIES
         GCM_TCC0_TCC1,
         GCM_TCC0_TCC1,
         GCM_TCC2,
@@ -308,7 +309,7 @@ void analogWrite(uint32_t pin, uint32_t value)
         GCLK_CLKCTRL_ID(GCM_TC6_TC7),   // TC7
 #endif
       };
-#if SAMC
+#if SAMC_SERIES
       GCLK->PCHCTRL[GCLK_CLKCTRL_IDs[tcNum]].reg = (GCLK_PCHCTRL_CHEN | GCLK_PCHCTRL_GEN_GCLK0 );
       while ( GCLK->SYNCBUSY.reg & GCLK_SYNCBUSY_MASK );
 #else
@@ -326,7 +327,7 @@ void analogWrite(uint32_t pin, uint32_t value)
         // Set Timer counter Mode to 16 bits, normal PWM
         TCx->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;
         syncTC_16(TCx);
-#if SAMC
+#if SAMC_SERIES
         TCx->COUNT16.WAVE.reg = TC_WAVE_WAVEGEN_NPWM;
 #else
         TCx->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_NPWM;
@@ -360,14 +361,14 @@ void analogWrite(uint32_t pin, uint32_t value)
     } else {
       if (tcNum >= TCC_INST_NUM) {
         Tc* TCx = (Tc*) GetTC(pinDesc.ulPWMChannel);
-#if SAMC
+#if SAMC_SERIES
         TCx->COUNT16.CCBUF[tcChannel].reg = (uint32_t) value;
 #else
         TCx->COUNT16.CC[tcChannel].reg = (uint32_t) value;
 #endif
         syncTC_16(TCx);
       } else {
-#if SAMC
+#if SAMC_SERIES
 // LUPD caused endless spinning in syncTCC() on SAML (and probably SAMC). Note that CCBUF writes are already
 // atomic. The LUPD bit is intended for updating several registers at once, which analogWrite() does not do.
         // -- Configure TCC

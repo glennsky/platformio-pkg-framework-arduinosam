@@ -1,4 +1,5 @@
 /*
+  Copyright (c) 2017 MattairTech LLC. All right reserved.
   Copyright (c) 2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -19,7 +20,7 @@
 #include "Tone.h"
 #include "variant.h"
 
-#if SAMC21
+#if SAMC21_SERIES
 #define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.SYNCBUSY.reg);
 #else
 #define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.STATUS.bit.SYNCBUSY);
