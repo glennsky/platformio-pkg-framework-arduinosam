@@ -194,9 +194,9 @@ uint32_t analogRead(uint32_t pin)
     syncDAC();
   }
 
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
   ADC->INPUTCTRL.bit.MUXPOS = g_APinDescription[pin].ulADCChannelNumber; // Selection for the positive ADC input
-
   // Control A
   /*
    * Bit 1 ENABLE: Enable
@@ -209,27 +209,32 @@ uint32_t analogRead(uint32_t pin)
    * Before enabling the ADC, the asynchronous clock source must be selected and enabled, and the ADC reference must be
    * configured. The first conversion after the reference is changed must not be used.
    */
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
   ADC->CTRLA.bit.ENABLE = 0x01;             // Enable ADC
 
   // Start conversion
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
   ADC->SWTRIG.bit.START = 1;
 
   // Clear the Data Ready flag
   ADC->INTFLAG.reg = ADC_INTFLAG_RESRDY;
 
   // Start conversion again, since The first conversion after the reference is changed must not be used.
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
   ADC->SWTRIG.bit.START = 1;
 
   // Store the value
   while (ADC->INTFLAG.bit.RESRDY == 0);   // Waiting for conversion to complete
   valueRead = ADC->RESULT.reg;
 
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
   ADC->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
-  syncADC();
+  while ( ADC->SYNCBUSY.reg & ADC_SYNCBUSY_MASK );
+  //syncADC();
 
   return mapResolution(valueRead, _ADCResolution, _readResolution);
 }
