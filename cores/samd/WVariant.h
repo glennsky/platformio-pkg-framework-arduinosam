@@ -75,31 +75,31 @@ typedef enum _ETCChannel
   TCC1_CH3 = (1<<8)|(1), // Channel 3 is 1!
   TCC2_CH0 = (2<<8)|(0),
   TCC2_CH1 = (2<<8)|(1),
+#if !SAMC_SERIES
   TCC2_CH2 = (2<<8)|(0), // Channel 2 is 0!
   TCC2_CH3 = (2<<8)|(1), // Channel 3 is 1!
+#endif // !SAMC_SERIES
   TC3_CH0  = (3<<8)|(0),
   TC3_CH1  = (3<<8)|(1),
   TC4_CH0  = (4<<8)|(0),
   TC4_CH1  = (4<<8)|(1),
+#if !SAMC_SERIES
   TC5_CH0  = (5<<8)|(0),
   TC5_CH1  = (5<<8)|(1),
-#if defined(__SAMD21J18A__) || defined(__SAMC21J18A__)
+#if defined(__SAMD21J18A__)
   TC6_CH0  = (6<<8)|(0),
   TC6_CH1  = (6<<8)|(1),
   TC7_CH0  = (7<<8)|(0),
   TC7_CH1  = (7<<8)|(1),
 #endif // __SAMD21J18A__ || __SAMC21J18A__
+#endif  // !SAMC_SERIES
 } ETCChannel ;
 
 extern const void* g_apTCInstances[TCC_INST_NUM+TC_INST_NUM] ;
 
 #define GetTCNumber( x ) ( (x) >> 8 )
 #define GetTCChannelNumber( x ) ( (x) & 0xff )
-#if SAMC_SERIES
-#define GetTC( x ) ( (((x) >> 3) & 0x01 ) == 0 ? g_apTCInstances[((x) >> 4) & 0x07] : (((((x) >> 4) & 0x07) == 4) ? TC4 : g_apTCInstances[(((x) >> 4) & 0x07) + TCC_INST_NUM]) )
-#else
 #define GetTC( x ) ( g_apTCInstances[(x) >> 8] )
-#endif
 
 // Definitions for PWM channels
 typedef enum _EPWMChannel
@@ -119,12 +119,15 @@ typedef enum _EPWMChannel
   PWM1_CH3=TCC1_CH3,
   PWM2_CH0=TCC2_CH0,
   PWM2_CH1=TCC2_CH1,
+#if !SAMC_SERIES
   PWM2_CH2=TCC2_CH2,
   PWM2_CH3=TCC2_CH3,
+#endif // !SAMC_SERIES
   PWM3_CH0=TC3_CH0,
   PWM3_CH1=TC3_CH1,
   PWM4_CH0=TC4_CH0,
   PWM4_CH1=TC4_CH1,
+#if !SAMC_SERIES
   PWM5_CH0=TC5_CH0,
   PWM5_CH1=TC5_CH1,
 #if defined(__SAMD21J18A__) || defined(__SAMC21J18A__)
@@ -133,6 +136,7 @@ typedef enum _EPWMChannel
   PWM7_CH0=TC7_CH0,
   PWM7_CH1=TC7_CH1,
 #endif // __SAMD21J18A__ || __SAMC21J18A__
+#endif // !SAMC_SERIES
 } EPWMChannel ;
 
 typedef enum _EPortType

@@ -298,9 +298,6 @@ void analogWrite(uint32_t pin, uint32_t value)
         GCM_TCC0_TCC1,
         GCM_TCC0_TCC1,
         GCM_TCC2,
-        GCM_TC0_TC1,
-        GCM_TC0_TC1,
-        GCM_TC2_TC3,
         GCM_TC2_TC3,
         GCM_TC4,
 #else
