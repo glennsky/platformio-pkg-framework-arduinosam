@@ -17,6 +17,9 @@
 */
 
 #pragma once
+#include "sam.h"
+
+#if !SAMC21_SERIES
 
 #include <Arduino.h>
 
@@ -434,3 +437,4 @@ private:
 	volatile bool notify;
 };
 
+#endif // SAMC21_SERIES
