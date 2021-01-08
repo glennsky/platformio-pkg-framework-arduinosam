@@ -15,42 +15,6 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/*
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * + Pin number + Gemma Board pin  |  PIN   | Label/Name      | Comments (* is for default peripheral in use)
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * |            | Digital Low      |        |                 |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * | 0          | D0               |  PA04  | D0/A2/SDA/TX    | EIC/EXTINT[4]  ADC/AIN[4]  AC/AIN[0] PTC/Y[2]  SERCOM0/PAD[0]                  *TCC0/WO[0]
- * | 1          | D1               |  PA02  | D1/A0/VOUT      | EIC/EXTINT[2]  ADC/AIN[0] *DAC/VOUT  PTC/Y[0]
- * | 2          | D2               |  PA05  | D2/A1/SCL/RX    | EIC/EXTINT[5]  ADC/AIN[5]  AC/AIN[1] PTC/Y[5]  SERCOM0/PAD[1]                  *TCC0/WO[1]
- * | 3          | Dotstar Data     |  PA00  |                 | 
- * | 4          | DotStar Clock    |  PA01  |                 | 
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * |            | USB              |        |                 |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * | 5          |                  |  PA28  | USB_HOST_ENABLE | EIC/EXTINT[8]
- * | 6          |                  |  PA24  | USB_NEGATIVE    | *USB/DM
- * | 7          |                  |  PA25  | USB_POSITIVE    | *USB/DP
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * |            | Analog Pins      |        |                 |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * | 8          | A0               |  PA02  | D1/A0/VOUT      | EIC/EXTINT[2] *ADC/AIN[0]  DAC/VOUT  PTC/Y[0]
- * | 9          | A1               |  PA05  | D2/A1/SCL/RX    | EIC/EXTINT[5] *ADC/AIN[5]  AC/AIN[1] PTC/Y[5]  SERCOM0/PAD[1]                  TCC0/WO[1]
- * | 10         | A2               |  PA04  | D0/A2/SDA/TX    | EIC/EXTINT[4] *ADC/AIN[4]  AC/AIN[0] PTC/Y[2]  SERCOM0/PAD[0]                  TCC0/WO[0]
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * |            | SWD              |        |                 |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * | 11         |                  |  PA30  | SWD Clock       | 
- * | 12         |                  |  PA31  | SWD Data        |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * |            | Digital High     |        |                 |
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- * | 13         | 13               |  PA23  | LED             | EIC/EXTINT[7]                        PTC/X[11] *SERCOM3/PAD[1] SERCOM5/PAD[1] TC4/WO[1] TCC0/WO[5]
- * | 14         | 14               |  PA10  | RXLED           | EIC/EXTINT[10] ADC/AIN[18]           PTC/X[2] *SERCOM0/PAD[2]                  TCC0/WO[2]  TCC1/WO[0]
- * | 15         | 15               |  PA11  | TXLED           | EIC/EXTINT[11] ADC/AIN[19]           PTC/X[3] *SERCOM0/PAD[3]  SERCOM2/PAD[3]  TCC0/WO[3]  TCC1/WO[1]
- * +------------+------------------+--------+-----------------+--------------------------------------------------------------------------------------------------------
- */
 
 
 #include "variant.h"
@@ -61,13 +25,13 @@
 const PinDescription g_APinDescription[]=
 {
   // GPIO 0, 1, 2 on external pads
-  // 0 - SERCOM0 for I2C SDA or UART TX, Captouch, IRQ, PWM out TCC0/WO[0], and gen purpose pin
+  // 0 - SERCOM0.0 for I2C SDA, UART TX, SPI MOSI, Captouch, IRQ, PWM out TCC0/WO[0], and gen purpose pin
   { PORTA,  4, PIO_SERCOM_ALT, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER), No_ADC_Channel, PWM0_CH0, TCC0_CH0, EXTERNAL_INT_4 },  // TCC0/WO[0]
 
   // 1 - ADC, DAC, IRQ, Captouch and general purpose pin - no timer
   { PORTA,  2, PIO_ANALOG, PIN_ATTR_ANALOG, ADC_Channel0, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_2 }, // ADC/AIN[0]
 
-  // 2 - SERCOM0 for I2C SCL or UART RX, Captouch, IRQ, PWM out TCC0/WO[1], and gen purpose pin
+  // 2 - SERCOM0 for I2C SCL, UART RX, SPI CLK, Captouch, IRQ, PWM out TCC0/WO[1], and gen purpose pin
   { PORTA,  5, PIO_SERCOM_ALT, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER), No_ADC_Channel, PWM0_CH1, TCC0_CH1, EXTERNAL_INT_5 }, // TCC0/WO[1]
 
   // GPIO 3 & 4 - DotStar internal data/clock
@@ -101,7 +65,10 @@ const PinDescription g_APinDescription[]=
   { PORTA, 10, PIO_DIGITAL, (PIN_ATTR_DIGITAL), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_10 },
   { PORTA, 11, PIO_DIGITAL, (PIN_ATTR_DIGITAL), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_11 },
 
-  // For unknown reasons we need to have gpio 16-21 so here are 6 extra pins (shrug)
+  // Placeholder #16 - extra Sercom/SPI pin that doesnt actually get used
+  { PORTA,  6, PIO_SERCOM_ALT, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER), No_ADC_Channel, PWM1_CH0, TCC1_CH0, EXTERNAL_INT_6 }, // TCC0/WO[1]
+
+  // For unknown reasons we need to have gpio 17-21 so here are extra pins (shrug)
   { PORTA, 14, PIO_DIGITAL, (PIN_ATTR_DIGITAL), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_14 },
   { PORTA, 15, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER), No_ADC_Channel, PWM3_CH1, TC3_CH1, EXTERNAL_INT_15 },
   { PORTA, 16, PIO_TIMER, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER), No_ADC_Channel, PWM2_CH0, TCC2_CH0, EXTERNAL_INT_0 }, // TCC2/WO[0]

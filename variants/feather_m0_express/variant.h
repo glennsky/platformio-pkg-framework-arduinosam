@@ -30,7 +30,7 @@
 #define VARIANT_MAINOSC		(32768ul)
 
 /** Master clock frequency */
-#define VARIANT_MCK			  (48000000ul)
+#define VARIANT_MCK	(F_CPU)
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -53,8 +53,8 @@ extern "C"
  *----------------------------------------------------------------------------*/
 
 // Number of pins defined in PinDescription array
-#define PINS_COUNT           (26u)
-#define NUM_DIGITAL_PINS     (20u)
+#define PINS_COUNT           (42u)
+#define NUM_DIGITAL_PINS     (42u)
 #define NUM_ANALOG_INPUTS    (12u)
 #define NUM_ANALOG_OUTPUTS   (1u)
 #define analogInputToDigitalPin(p)  ((p < 6u) ? (p) + 14u : -1)
@@ -84,6 +84,8 @@ extern "C"
 #define PIN_LED2             PIN_LED_RXL
 #define PIN_LED3             PIN_LED_TXL
 #define LED_BUILTIN          PIN_LED_13
+#define NEOPIXEL_BUILTIN     (8u)
+#define PIN_NEOPIXEL		     NEOPIXEL_BUILTIN
 
 /*
  * Analog pins
@@ -159,9 +161,9 @@ static const uint8_t SCK  = PIN_SPI_SCK ;
 #define PAD_SPI1_RX           SERCOM_RX_PAD_2
 
 static const uint8_t SS1   = 39 ;	// HW SS isn't used. Set here only for reference.
-static const uint8_t MOSI1 = PIN_SPI_MOSI ;
-static const uint8_t MISO1 = PIN_SPI_MISO ;
-static const uint8_t SCK1  = PIN_SPI_SCK ;
+static const uint8_t MOSI1 = PIN_SPI1_MOSI ;
+static const uint8_t MISO1 = PIN_SPI1_MISO ;
+static const uint8_t SCK1  = PIN_SPI1_SCK ;
 
 
 /*

@@ -28,6 +28,12 @@ unsigned char sduBoot[0x4000] = {
   #include "boot/mkr1000.h"
 #elif defined(ARDUINO_SAMD_MKRZERO)
   #include "boot/mkrzero.h"
+#elif defined(ARDUINO_SAMD_MKRFox1200)
+  #include "boot/mkrfox1200.h"
+#elif defined(ARDUINO_SAMD_MKRGSM1400)
+  #include "boot/mkrgsm1400.h"
+#elif defined(ARDUINO_SAMD_MKRWAN1300)
+  #include "boot/mkrwan1300.h"
 #else
   #error "Unsupported board!"
 #endif

@@ -30,7 +30,7 @@
 #define VARIANT_MAINOSC		(32768ul)
 
 /** Master clock frequency */
-#define VARIANT_MCK			  (48000000ul)
+#define VARIANT_MCK	(F_CPU)
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -84,6 +84,8 @@ extern "C"
 #define PIN_LED2             PIN_LED_RXL
 #define PIN_LED3             PIN_LED_TXL
 #define LED_BUILTIN          PIN_LED_13
+#define NEOPIXEL_BUILTIN     (40u)
+#define PIN_NEOPIXEL         NEOPIXEL_BUILTIN
 
 /*
  * Analog pins
@@ -216,6 +218,7 @@ extern SERCOM sercom3;
 extern SERCOM sercom4;
 extern SERCOM sercom5;
 
+extern Uart Serial5;
 extern Uart Serial1;
 
 #endif

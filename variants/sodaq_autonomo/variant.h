@@ -19,8 +19,8 @@
 #ifndef _VARIANT_SODAQ_AUTONOMO_
 #define _VARIANT_SODAQ_AUTONOMO_
 
-// The definitions here needs a SAMD core >=1.6.3
-#define ARDUINO_SAMD_VARIANT_COMPLIANCE 10603
+// The definitions here needs a SAMD core >=1.6.10
+#define ARDUINO_SAMD_VARIANT_COMPLIANCE 10610
 
 /*----------------------------------------------------------------------------
  *        Definitions
@@ -79,9 +79,6 @@ extern "C"
  * https://github.com/arduino/Arduino/issues/1833
  */
 // #define digitalPinToTimer(P)
-
-// Interrupts
-#define digitalPinToInterrupt(P)   ( g_APinDescription[P].ulExtInt )
 
 // LEDs
 #define PIN_LED_13           (13u)
@@ -234,6 +231,17 @@ static const uint8_t DAC0     = PIN_A0; // or (35u) implications for cores/ardui
  */
 #define PIN_USB_DM          (47ul)
 #define PIN_USB_DP          (48ul)
+
+/*
+ * I2S Interfaces
+ */
+#define I2S_INTERFACES_COUNT 1
+
+#define I2S_DEVICE          0
+#define I2S_CLOCK_GENERATOR 3
+#define PIN_I2S_SD          (14u)
+#define PIN_I2S_SCK         (1u)
+#define PIN_I2S_FS          (2u)
 
 #ifdef __cplusplus
 }
